@@ -256,7 +256,9 @@ class Nvib(nn.Module):
 
         return z_tuple, memory_key_padding_mask
 
-    def kl_gaussian(self, mu, logvar, alpha, memory_key_padding_mask, **kwargs):
+    def kl_gaussian(
+        self, mu, logvar, alpha, memory_key_padding_mask, fuzzing_mask, **kwargs
+    ):
         """
         KL Loss for the Gaussian component with expected K
         :param mu: mean [Nl,B,H]
@@ -268,6 +270,9 @@ class Nvib(nn.Module):
 
         # Scaling
         # Total number of vectors sampled
+        if fuzzing_mask is not None:
+            fuzzing_mask = fuzzing_mask.bool()
+            memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
         # Input length
         n = k0 / self.kappa  # [B]
@@ -293,7 +298,7 @@ class Nvib(nn.Module):
 
         return kl
 
-    def kl_dirichlet(self, alpha, memory_key_padding_mask, **kwargs):
+    def kl_dirichlet(self, alpha, memory_key_padding_mask, fuzzing_mask, **kwargs):
         """
         The regularisation for the dirichlet component with expected K
 
@@ -303,6 +308,10 @@ class Nvib(nn.Module):
 
         Nota Bene: digamma and lgamma cannot be zero
         """
+
+        if fuzzing_mask is not None:
+            fuzzing_mask = fuzzing_mask.bool()
+            memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
 
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
