@@ -310,8 +310,10 @@ class Nvib(nn.Module):
         """
 
         if fuzzing_mask is not None:
+            print(f"Fuzzing mask: {fuzzing_mask}")
             fuzzing_mask = fuzzing_mask.bool()
             memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
+            print(f"Memory key padding mask: {memory_key_padding_mask}")
 
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
