@@ -302,6 +302,8 @@ class Nvib(nn.Module):
         kl = 0.5 * k0 * torch.sum(kl * expected_pi, 0)
         kl /= n
 
+        pprint(f"[blue]Value of kl-g: {kl.size()}-{kl}[/blue]")
+
         return kl
 
     def kl_dirichlet(self, alpha, memory_key_padding_mask, **kwargs):
