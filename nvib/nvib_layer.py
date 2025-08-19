@@ -316,7 +316,7 @@ class Nvib(nn.Module):
 
         if fuzzing_mask is not None:
             pprint(
-                f"[yellow]Fuzzing mask: {fuzzing_mask.size()}, {fuzzing_mask}[/yellow]"
+                f"[yellow]Fuzzing mask: {fuzzing_mask.size()}, {torch.where(fuzzing_mask==True)}[/yellow]"
             )
             fuzzing_mask = fuzzing_mask.bool()
             unknown_fuzzing_mask = torch.zeros_like(
