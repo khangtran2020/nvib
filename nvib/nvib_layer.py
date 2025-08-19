@@ -353,7 +353,7 @@ class Nvib(nn.Module):
         )
         pprint(f"[green]Value of k0: {torch.isnan(k0).any()}[/green]")
         pprint(
-            f"[green]Value of torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0): {torch.isnan(torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0)).any()}[/green]"
+            f"[green]Value of k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0)): {torch.isnan(k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0))).any()}[/green]"
         )
 
         kl = torch.lgamma(alpha0_q) - torch.lgamma(alpha0_p)
