@@ -315,6 +315,7 @@ class Nvib(nn.Module):
 
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
+        print(f"Value of k0: {k0}")
         # Input length
         n = k0 / self.kappa  # [B]
         # Conditional prior lower bound. Sentence length without prior
@@ -324,10 +325,13 @@ class Nvib(nn.Module):
         alpha = alpha.masked_fill(
             memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0
         )
+        print(f"Value of alpha: {alpha}")
         alpha0_q = torch.sum(alpha, 0).squeeze(-1).to(torch.float64)  # [B]
         alpha0_p = (torch.ones_like(alpha0_q) * (self.prior_log_alpha + lowerBound)).to(
             torch.float64
         )  # [B]
+        print(f"Value of alpha0_q: {alpha0_q}")
+        print(f"Value of alpha0_p: {alpha0_p}")
 
         kl = (
             torch.lgamma(alpha0_q)
@@ -346,7 +350,7 @@ class Nvib(nn.Module):
         alpha_skip=None,
         batch_first=True,
         logging=False,
-        **kwargs
+        **kwargs,
     ):
         """
         The latent layer for NVIB. Notice length comes in as NS and exits Nl (Ns+1) for the prior
