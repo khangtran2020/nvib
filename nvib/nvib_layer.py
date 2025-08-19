@@ -257,9 +257,7 @@ class Nvib(nn.Module):
 
         return z_tuple, memory_key_padding_mask
 
-    def kl_gaussian(
-        self, mu, logvar, alpha, memory_key_padding_mask, fuzzing_mask, **kwargs
-    ):
+    def kl_gaussian(self, mu, logvar, alpha, memory_key_padding_mask, **kwargs):
         """
         KL Loss for the Gaussian component with expected K
         :param mu: mean [Nl,B,H]
@@ -271,38 +269,31 @@ class Nvib(nn.Module):
 
         # Scaling
         # Total number of vectors sampled
-        if fuzzing_mask is not None:
-            fuzzing_mask = fuzzing_mask.bool()
-            unknown_fuzzing_mask = torch.zeros_like(
-                fuzzing_mask[:, 0:1, :], dtype=bool, device=fuzzing_mask.device
-            )
-            fuzzing_mask = torch.cat((unknown_fuzzing_mask, fuzzing_mask), 1)
-            memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
         # Input length
         n = k0 / self.kappa  # [B]
-        pprint(f"[blue]Value of k0 - dl_g: {k0}[/blue]")
-        pprint(f"[blue]Value of n - dlg: {n}[/blue]")
+        # pprint(f"[blue]Value of k0 - dl_g: {k0}[/blue]")
+        # pprint(f"[blue]Value of n - dlg: {n}[/blue]")
 
         alpha = alpha.masked_fill(
             memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0
         )
-        pprint(f"[blue]Value of alpha: {alpha}[/blue]")
+        # pprint(f"[blue]Value of alpha: {alpha}[/blue]")
         alpha0_q = torch.sum(alpha.transpose(2, 0), -1)  # [1,B]
         expected_pi = alpha.squeeze(-1) / alpha0_q  # [Nl,B]
-        pprint(f"[blue]Value of alpha0_q: {alpha0_q}[/blue]")
-        pprint(f"[blue]Value of expected_pi: {expected_pi}[/blue]")
+        # pprint(f"[blue]Value of alpha0_q: {alpha0_q}[/blue]")
+        # pprint(f"[blue]Value of expected_pi: {expected_pi}[/blue]")
 
         # KL between univariate Gaussians
         var_ratio = logvar.exp() / self.prior_var
         t1 = (mu - self.prior_mu) ** 2 / self.prior_var
         kl = var_ratio + t1 - 1 - var_ratio.log()
-        pprint(f"[blue]Value of var_ratio: {var_ratio}[/blue]")
-        pprint(f"[blue]Value of t1: {t1}[/blue]")
-        pprint(f"[blue]Value of kl: {kl.size()}-{kl}[/blue]")
+        # pprint(f"[blue]Value of var_ratio: {var_ratio}[/blue]")
+        # pprint(f"[blue]Value of t1: {t1}[/blue]")
+        # pprint(f"[blue]Value of kl: {kl.size()}-{kl}[/blue]")
 
         kl = kl.masked_fill(memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0)
-        pprint(f"[blue]Value of kl: {kl}[/blue]")
+        # pprint(f"[blue]Value of kl: {kl}[/blue]")
 
         # Mean over embedding dimension
         kl = torch.mean(kl, -1)  # [Nl,B]
@@ -313,7 +304,7 @@ class Nvib(nn.Module):
 
         return kl
 
-    def kl_dirichlet(self, alpha, memory_key_padding_mask, fuzzing_mask, **kwargs):
+    def kl_dirichlet(self, alpha, memory_key_padding_mask, **kwargs):
         """
         The regularisation for the dirichlet component with expected K
 
@@ -323,24 +314,9 @@ class Nvib(nn.Module):
 
         Nota Bene: digamma and lgamma cannot be zero
         """
-
-        if fuzzing_mask is not None:
-            pprint(
-                f"[yellow]Fuzzing mask: {fuzzing_mask.size()}, {torch.where(fuzzing_mask==True)}[/yellow]"
-            )
-            fuzzing_mask = fuzzing_mask.bool()
-            unknown_fuzzing_mask = torch.zeros_like(
-                fuzzing_mask[:, 0:1, :], dtype=bool, device=fuzzing_mask.device
-            )
-            fuzzing_mask = torch.cat((unknown_fuzzing_mask, fuzzing_mask), 1)
-            memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
-            pprint(
-                f"[cyan]Memory key padding mask: {torch.where(memory_key_padding_mask==False)}[/cyan]"
-            )
-
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
-        pprint(f"[green]Value of k0: {k0}[/green]")
+        # pprint(f"[green]Value of k0: {k0}[/green]")
         # Input length
         n = k0 / self.kappa  # [B]
         # Conditional prior lower bound. Sentence length without prior
@@ -350,31 +326,31 @@ class Nvib(nn.Module):
         alpha = alpha.masked_fill(
             memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0
         )
-        pprint(f"[green]Value of alpha: {alpha}[/green]")
+        # pprint(f"[green]Value of alpha: {alpha}[/green]")
         alpha0_q = torch.sum(alpha, 0).squeeze(-1).to(torch.float64)  # [B]
         alpha0_p = (torch.ones_like(alpha0_q) * (self.prior_log_alpha + lowerBound)).to(
             torch.float64
         )  # [B]
-        pprint(f"[green]Value of alpha0_q: {alpha0_q}[/green]")
-        pprint(f"[green]Value of alpha0_p: {alpha0_p}[/green]")
-        pprint(
-            f"[green]Value of torch.lgamma(alpha0_q): {torch.lgamma(alpha0_q)}[/green]"
-        )
-        pprint(
-            f"[green]Value of torch.lgamma(alpha0_p): {torch.lgamma(alpha0_p)}[/green]"
-        )
-        pprint(
-            f"[green]Value of torch.digamma(alpha0_q): {torch.digamma(alpha0_q)}[/green]"
-        )
-        pprint(
-            f"[green]Value of torch.digamma(alpha0_q / k0): {torch.digamma(alpha0_q / k0)}[/green]"
-        )
-        pprint(
-            f"[green]Value of torch.lgamma(alpha0_p / k0): {torch.lgamma(alpha0_p / k0)}[/green]"
-        )
-        pprint(
-            f"[green]Value of torch.lgamma(alpha0_q / k0): {torch.lgamma(alpha0_q / k0)}[/green]"
-        )
+        # pprint(f"[green]Value of alpha0_q: {alpha0_q}[/green]")
+        # pprint(f"[green]Value of alpha0_p: {alpha0_p}[/green]")
+        # pprint(
+        #     f"[green]Value of torch.lgamma(alpha0_q): {torch.lgamma(alpha0_q)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.lgamma(alpha0_p): {torch.lgamma(alpha0_p)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.digamma(alpha0_q): {torch.digamma(alpha0_q)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.digamma(alpha0_q / k0): {torch.digamma(alpha0_q / k0)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.lgamma(alpha0_p / k0): {torch.lgamma(alpha0_p / k0)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.lgamma(alpha0_q / k0): {torch.lgamma(alpha0_q / k0)}[/green]"
+        # )
 
         kl = (
             torch.lgamma(alpha0_q)
