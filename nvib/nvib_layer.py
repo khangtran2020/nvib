@@ -360,6 +360,8 @@ class Nvib(nn.Module):
             + k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0))
         ) / n
 
+        pprint(f"[green]Value of kl: {torch.isnan(kl).any()}[/green]")
+
         return kl.to(torch.float32)
 
     def forward(
