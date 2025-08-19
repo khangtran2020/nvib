@@ -389,9 +389,12 @@ class Nvib(nn.Module):
             log_alpha = self.alpha_proj(encoder_output) + torch.log(
                 alpha_skip[1:, :, :]
             )
+            # clamp log_alpha to avoid numerical issues but ensure differentiable
+            log_alpha = torch.clamp(log_alpha, min=-50, max=50)
             alpha = self.alpha_activation(log_alpha)
         else:
             log_alpha = self.alpha_proj(encoder_output)
+            log_alpha = torch.clamp(log_alpha, min=-50, max=50)
             alpha = self.alpha_activation(log_alpha)
 
         # Clamp alpha
