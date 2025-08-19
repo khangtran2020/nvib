@@ -324,7 +324,9 @@ class Nvib(nn.Module):
             )
             fuzzing_mask = torch.cat((unknown_fuzzing_mask, fuzzing_mask), 1)
             memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
-            pprint(f"[cyan]Memory key padding mask: {memory_key_padding_mask}[/cyan]")
+            pprint(
+                f"[cyan]Memory key padding mask: {torch.where(memory_key_padding_mask==False)}[/cyan]"
+            )
 
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
