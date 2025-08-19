@@ -351,14 +351,25 @@ class Nvib(nn.Module):
         pprint(
             f"[green]Value of torch.lgamma(alpha0_q / k0): {torch.isnan(torch.lgamma(alpha0_q / k0)).any()}[/green]"
         )
+        kl = torch.lgamma(alpha0_q) - torch.lgamma(alpha0_p)
+        pprint(f"[green]Value of kl: {torch.isnan(kl).any()}[/green]")
+        kl += (alpha0_q - alpha0_p) * (
+            -torch.digamma(alpha0_q) + torch.digamma(alpha0_q / k0)
+        )
+        pprint(f"[green]Value of kl: {torch.isnan(kl).any()}[/green]")
+        kl += k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0))
+        pprint(f"[green]Value of kl: {torch.isnan(kl).any()}[/green]")
+        # Divide by the number of samples
+        kl = kl / n  # [B]
+        pprint(f"[green]Value of kl: {torch.isnan(kl).any()}[/green]")
 
-        kl = (
-            torch.lgamma(alpha0_q)
-            - torch.lgamma(alpha0_p)
-            + (alpha0_q - alpha0_p)
-            * (-torch.digamma(alpha0_q) + torch.digamma(alpha0_q / k0))
-            + k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0))
-        ) / n
+        # kl = (
+        #     torch.lgamma(alpha0_q)
+        #     - torch.lgamma(alpha0_p)
+        #     + (alpha0_q - alpha0_p)
+        #     * (-torch.digamma(alpha0_q) + torch.digamma(alpha0_q / k0))
+        #     + k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0))
+        # ) / n
 
         pprint(f"[green]Value of kl: {torch.isnan(kl).any()}[/green]")
 
