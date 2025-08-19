@@ -332,6 +332,10 @@ class Nvib(nn.Module):
         )  # [B]
         print(f"Value of alpha0_q: {alpha0_q}")
         print(f"Value of alpha0_p: {alpha0_p}")
+        print(f"Value of torch.lgamma(alpha0_q): {torch.lgamma(alpha0_q)}")
+        print(f"Value of torch.lgamma(alpha0_p): {torch.lgamma(alpha0_p)}")
+        print(f"Value of torch.digamma(alpha0_q): {torch.digamma(alpha0_q)}")
+        print(f"Value of torch.digamma(alpha0_q / k0): {torch.digamma(alpha0_q / k0)}")
 
         kl = (
             torch.lgamma(alpha0_q)
