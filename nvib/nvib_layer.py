@@ -299,7 +299,7 @@ class Nvib(nn.Module):
         kl = var_ratio + t1 - 1 - var_ratio.log()
         pprint(f"[blue]Value of var_ratio: {var_ratio}[/blue]")
         pprint(f"[blue]Value of t1: {t1}[/blue]")
-        pprint(f"[blue]Value of kl: {kl}[/blue]")
+        pprint(f"[blue]Value of kl: {kl.size()}-{kl}[/blue]")
 
         kl = kl.masked_fill(memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0)
         pprint(f"[blue]Value of kl: {kl}[/blue]")
