@@ -281,18 +281,28 @@ class Nvib(nn.Module):
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
         # Input length
         n = k0 / self.kappa  # [B]
+        pprint(f"[blue]Value of k0 - dl_g: {k0}[/blue]")
+        pprint(f"[blue]Value of n - dlg: {n}[/blue]")
 
         alpha = alpha.masked_fill(
             memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0
         )
+        pprint(f"[blue]Value of alpha: {alpha}[/blue]")
         alpha0_q = torch.sum(alpha.transpose(2, 0), -1)  # [1,B]
         expected_pi = alpha.squeeze(-1) / alpha0_q  # [Nl,B]
+        pprint(f"[blue]Value of alpha0_q: {alpha0_q}[/blue]")
+        pprint(f"[blue]Value of expected_pi: {expected_pi}[/blue]")
 
         # KL between univariate Gaussians
         var_ratio = logvar.exp() / self.prior_var
         t1 = (mu - self.prior_mu) ** 2 / self.prior_var
         kl = var_ratio + t1 - 1 - var_ratio.log()
+        pprint(f"[blue]Value of var_ratio: {var_ratio}[/blue]")
+        pprint(f"[blue]Value of t1: {t1}[/blue]")
+        pprint(f"[blue]Value of kl: {kl}[/blue]")
+
         kl = kl.masked_fill(memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0)
+        pprint(f"[blue]Value of kl: {kl}[/blue]")
 
         # Mean over embedding dimension
         kl = torch.mean(kl, -1)  # [Nl,B]
