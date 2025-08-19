@@ -273,6 +273,10 @@ class Nvib(nn.Module):
         # Total number of vectors sampled
         if fuzzing_mask is not None:
             fuzzing_mask = fuzzing_mask.bool()
+            unknown_fuzzing_mask = torch.zeros_like(
+                fuzzing_mask[:, 0:1, :], dtype=bool, device=fuzzing_mask.device
+            )
+            fuzzing_mask = torch.cat((unknown_fuzzing_mask, fuzzing_mask), 1)
             memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
         # Input length
@@ -315,6 +319,10 @@ class Nvib(nn.Module):
                 f"[yellow]Fuzzing mask: {fuzzing_mask.size()}, {fuzzing_mask}[/yellow]"
             )
             fuzzing_mask = fuzzing_mask.bool()
+            unknown_fuzzing_mask = torch.zeros_like(
+                fuzzing_mask[:, 0:1, :], dtype=bool, device=fuzzing_mask.device
+            )
+            fuzzing_mask = torch.cat((unknown_fuzzing_mask, fuzzing_mask), 1)
             memory_key_padding_mask = memory_key_padding_mask.logical_or(~fuzzing_mask)
             pprint(f"[cyan]Memory key padding mask: {memory_key_padding_mask}[/cyan]")
 
