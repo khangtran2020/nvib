@@ -240,7 +240,7 @@ def denoising_attention_eval(
     # where pi is zero include it to the attention mask
     pi_attn_mask = torch.zeros_like(pi.permute(0, 2, 1), dtype=torch.float)
     pi_attn_mask.masked_fill_(pi.permute(0, 2, 1).le(0), float("-inf"))
-    pprint(f"[red]Masking value: {attn_mask.size()}, {pi_attn_mask.size()}[/red]")
+    # pprint(f"[red]Masking value: {attn_mask.size()}, {pi_attn_mask.size()}[/red]")
     attn_mask += pi_attn_mask
 
     # Project back from the p space to the Q.K attention matrix
@@ -1040,7 +1040,7 @@ def denoising_multi_head_attention_forward(
             projected_u,
             projected_bias,
             mu,
-            logvar,
+            logvar.transpose(0, 1),
             pi.transpose(0, 1),
             mh_w_v,
             mh_b_v,
