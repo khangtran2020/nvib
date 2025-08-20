@@ -316,11 +316,13 @@ class Nvib(nn.Module):
         """
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
-        pprint(f"[green]Value of k0: {k0}[/green]")
         # Input length
         n = k0 / self.kappa  # [B]
         # Conditional prior lower bound. Sentence length without prior
         lowerBound = self.delta * (n - 1)
+        pprint(f"[green]Value of k0: {k0}[/green]")
+        pprint(f"[green]Value of n: {n}[/green]")
+        pprint(f"[green]Value of lowerBound: {lowerBound}[/green]")
 
         # Sum the alphas
         alpha = alpha.masked_fill(
