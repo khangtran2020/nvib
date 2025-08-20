@@ -985,7 +985,7 @@ def denoising_multi_head_attention_forward(
     # mu [Ns,B,P]
     # logvar [Ns,B,P]
 
-    pprint(f"[blue]Masking value: {attn_mask}, {key_padding_mask}[/blue]")
+    pprint(f"[blue]Masking value: {attn_mask.size()}, {key_padding_mask.size()}[/blue]")
 
     if training:
         #
