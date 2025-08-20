@@ -1033,7 +1033,7 @@ def denoising_multi_head_attention_forward(
         projected_bias = torch.einsum("bhme, hep -> bhmp", q_reshape, mh_b_k)
 
         pprint(
-            f"[red]Projected shapes: {projected_u.size()}, {projected_bias.size()}, Pi: {pi.size()}[/red]"
+            f"[red]Projected shapes: {projected_u.size()}, {projected_bias.size()}, Pi: {pi.size()}, Mu: {mu.size()}, Log-var: {logvar.size()}[/red]"
         )
 
         attn_output, attn_output_weights = denoising_attention_eval(
