@@ -1046,7 +1046,7 @@ def denoising_multi_head_attention_forward(
             mh_b_v,
             key_padding_mask,
             attn_mask,
-            dropout_p,
+            dropout_p=0.0,
         )
 
         # Reverse multiheads
