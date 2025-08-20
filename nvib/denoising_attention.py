@@ -18,7 +18,7 @@
 import math
 import warnings
 from typing import List
-
+from rich import print as pprint
 import torch
 from torch import Tensor
 from torch._jit_internal import Optional, Tuple
@@ -985,6 +985,8 @@ def denoising_multi_head_attention_forward(
     # mu [Ns,B,P]
     # logvar [Ns,B,P]
 
+    pprint(f"[blue]Masking value: {attn_mask}, {key_padding_mask}[/blue]")
+
     if training:
         #
         # (deep breath) calculate attention and out projection
@@ -1026,7 +1028,7 @@ def denoising_multi_head_attention_forward(
         # Project the multihead query and bias into the p space from the e (d/head) space
         projected_u = torch.einsum("bhme, hep -> bhmp", q_reshape, mh_w_k)
         projected_bias = torch.einsum("bhme, hep -> bhmp", q_reshape, mh_b_k)
-        
+
         attn_output, attn_output_weights = denoising_attention_eval(
             projected_u,
             projected_bias,
