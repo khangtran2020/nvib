@@ -316,7 +316,7 @@ class Nvib(nn.Module):
         """
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
-        pprint(f"[green]Value of k0: {torch.isnan(k0).any()}[/green]")
+        pprint(f"[green]Value of k0: {k0}[/green]")
         # Input length
         n = k0 / self.kappa  # [B]
         # Conditional prior lower bound. Sentence length without prior
@@ -326,34 +326,30 @@ class Nvib(nn.Module):
         alpha = alpha.masked_fill(
             memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0
         )
-        pprint(f"[green]Value of alpha: {torch.isnan(alpha).any()}[/green]")
+        pprint(f"[green]Value of alpha: {alpha}[/green]")
         alpha0_q = torch.sum(alpha, 0).squeeze(-1).to(torch.float64)  # [B]
         alpha0_p = (torch.ones_like(alpha0_q) * (self.prior_log_alpha + lowerBound)).to(
             torch.float64
         )  # [B]
-        pprint(f"[green]Value of alpha0_q: {torch.isnan(alpha0_q).any()}[/green]")
-        pprint(f"[green]Value of alpha0_p: {torch.isnan(alpha0_p).any()}[/green]")
+        pprint(f"[green]Value of alpha0_q: {alpha0_q}[/green]")
+        pprint(f"[green]Value of alpha0_p: {alpha0_p}[/green]")
         pprint(
-            f"[green]Value of torch.lgamma(alpha0_q): {torch.isnan(torch.lgamma(alpha0_q)).any()}[/green]"
+            f"[green]Value of torch.lgamma(alpha0_q): {torch.lgamma(alpha0_q)}[/green]"
         )
         pprint(
-            f"[green]Value of torch.lgamma(alpha0_p): {torch.isnan(torch.lgamma(alpha0_p)).any()}[/green]"
+            f"[green]Value of torch.lgamma(alpha0_p): {torch.lgamma(alpha0_p)}[/green]"
         )
         pprint(
-            f"[green]Value of torch.digamma(alpha0_q): {torch.isnan(torch.digamma(alpha0_q)).any()}[/green]"
+            f"[green]Value of torch.digamma(alpha0_q): {torch.digamma(alpha0_q)}[/green]"
         )
         pprint(
-            f"[green]Value of torch.digamma(alpha0_q / k0): {torch.isnan(torch.digamma(alpha0_q / k0)).any()}[/green]"
+            f"[green]Value of torch.digamma(alpha0_q / k0): {torch.digamma(alpha0_q / k0)}[/green]"
         )
         pprint(
-            f"[green]Value of torch.lgamma(alpha0_p / k0): {torch.isnan(torch.lgamma(alpha0_p / k0)).any()}[/green]"
+            f"[green]Value of torch.lgamma(alpha0_p / k0): {torch.lgamma(alpha0_p / k0)}[/green]"
         )
         pprint(
-            f"[green]Value of torch.lgamma(alpha0_q / k0): {torch.isnan(torch.lgamma(alpha0_q / k0)).any()}[/green]"
-        )
-        pprint(f"[green]Value of k0: {torch.isnan(k0).any()}[/green]")
-        pprint(
-            f"[green]Value of k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0)): {torch.isnan(k0 * (torch.lgamma(alpha0_p / k0) - torch.lgamma(alpha0_q / k0))).any()}[/green]"
+            f"[green]Value of torch.lgamma(alpha0_q / k0): {torch.lgamma(alpha0_q / k0)}[/green]"
         )
 
         kl = torch.lgamma(alpha0_q) - torch.lgamma(alpha0_p)
