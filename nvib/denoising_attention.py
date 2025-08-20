@@ -988,7 +988,7 @@ def denoising_multi_head_attention_forward(
     # mu [Ns,B,P]
     # logvar [Ns,B,P]
 
-    pprint(f"[blue]Masking value: {attn_mask.size()}, {key_padding_mask.size()}[/blue]")
+    # pprint(f"[blue]Masking value: {attn_mask.size()}, {key_padding_mask.size()}[/blue]")
 
     if training:
         #
@@ -1032,9 +1032,9 @@ def denoising_multi_head_attention_forward(
         projected_u = torch.einsum("bhme, hep -> bhmp", q_reshape, mh_w_k)
         projected_bias = torch.einsum("bhme, hep -> bhmp", q_reshape, mh_b_k)
 
-        pprint(
-            f"[red]Projected shapes: {projected_u.size()}, {projected_bias.size()}, Pi: {pi.size()}, Mu: {mu.size()}, Log-var: {logvar.size()}[/red]"
-        )
+        # pprint(
+        #     f"[red]Projected shapes: {projected_u.size()}, {projected_bias.size()}, Pi: {pi.size()}, Mu: {mu.size()}, Log-var: {logvar.size()}[/red]"
+        # )
 
         attn_output, attn_output_weights = denoising_attention_eval(
             projected_u,
