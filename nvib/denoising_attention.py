@@ -281,8 +281,8 @@ def denoising_attention_eval(
     if attn_mask is not None:
         attn += attn_mask
     attn = softmax(attn, dim=-1)
-    if dropout_p > 0.0:
-        attn = dropout(attn, p=dropout_p)
+    # if dropout_p > 0.0:
+    #     attn = dropout(attn, p=dropout_p)
 
     # Interpolate attention between Z and projected query
     output = torch.einsum(
