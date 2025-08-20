@@ -162,6 +162,7 @@ def denoising_attention_train(
     # where pi is zero include it to the attention mask
     pi_attn_mask = torch.zeros_like(pi.permute(0, 2, 1), dtype=torch.float)
     pi_attn_mask.masked_fill_(pi.permute(0, 2, 1).le(0), float("-inf"))
+    pprint(f"[blue]Masking value: {attn_mask.size()}, {pi_attn_mask.size()}[/blue]")
     attn_mask += pi_attn_mask
 
     # Include bias terms repeated over Nt dimension
@@ -238,6 +239,7 @@ def denoising_attention_eval(
     # where pi is zero include it to the attention mask
     pi_attn_mask = torch.zeros_like(pi.permute(0, 2, 1), dtype=torch.float)
     pi_attn_mask.masked_fill_(pi.permute(0, 2, 1).le(0), float("-inf"))
+    pprint(f"[red]Masking value: {attn_mask.size()}, {pi_attn_mask.size()}[/red]")
     attn_mask += pi_attn_mask
 
     # Project back from the p space to the Q.K attention matrix
