@@ -315,7 +315,7 @@ class Nvib(nn.Module):
         Nota Bene: digamma and lgamma cannot be zero
         """
         # Total number of vectors sampled
-        k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 0)  # [B]
+        k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 1)  # [B]
         # Input length
         n = k0 / self.kappa  # [B]
         # Conditional prior lower bound. Sentence length without prior
