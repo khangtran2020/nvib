@@ -340,17 +340,21 @@ class Nvib(nn.Module):
             f"[green]Value of torch.lgamma(alpha0_p): {torch.lgamma(alpha0_p)}[/green]"
         )
         pprint(
-            f"[green]Value of torch.digamma(alpha0_q): {torch.digamma(alpha0_q)}[/green]"
+            f"[cyan]Value of torch.lgamma(alpha0_q) - torch.lgamma(alpha0_p): {torch.lgamma(alpha0_q) - torch.lgamma(alpha0_p)}[/cyan]"
         )
-        pprint(
-            f"[green]Value of torch.digamma(alpha0_q / k0): {torch.digamma(alpha0_q / k0)}[/green]"
-        )
-        pprint(
-            f"[green]Value of torch.lgamma(alpha0_p / k0): {torch.lgamma(alpha0_p / k0)}[/green]"
-        )
-        pprint(
-            f"[green]Value of torch.lgamma(alpha0_q / k0): {torch.lgamma(alpha0_q / k0)}[/green]"
-        )
+
+        # pprint(
+        #     f"[green]Value of torch.digamma(alpha0_q): {torch.digamma(alpha0_q)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.digamma(alpha0_q / k0): {torch.digamma(alpha0_q / k0)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.lgamma(alpha0_p / k0): {torch.lgamma(alpha0_p / k0)}[/green]"
+        # )
+        # pprint(
+        #     f"[green]Value of torch.lgamma(alpha0_q / k0): {torch.lgamma(alpha0_q / k0)}[/green]"
+        # )
 
         kl = torch.lgamma(alpha0_q) - torch.lgamma(alpha0_p)
         pprint(f"[green]Value of kl: {kl}[/green]")
