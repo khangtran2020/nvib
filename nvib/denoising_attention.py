@@ -1039,7 +1039,7 @@ def denoising_multi_head_attention_forward(
         attn_output, attn_output_weights = denoising_attention_eval(
             projected_u,
             projected_bias,
-            mu,
+            mu.transpose(0, 1),
             logvar.transpose(0, 1),
             pi.transpose(0, 1),
             mh_w_v,
