@@ -158,7 +158,7 @@ def denoising_attention_train(
 
     # Repeat pi over B dim for heads B1H1, ..., B1Hn, B2H1, ..., B2Hn, ...
 
-    pprint(f"[blue]Masking value: {attn_mask.size()}, Pi - {pi.size()}[/blue]")
+    # pprint(f"[blue]Masking value: {attn_mask.size()}, Pi - {pi.size()}[/blue]")
     pi = torch.repeat_interleave(pi, nheads, dim=0)  # B, Nl, 1
 
     # where pi is zero include it to the attention mask
@@ -1041,7 +1041,7 @@ def denoising_multi_head_attention_forward(
             projected_bias,
             mu,
             logvar,
-            pi,
+            pi.transpose(0, 1),
             mh_w_v,
             mh_b_v,
             key_padding_mask,
