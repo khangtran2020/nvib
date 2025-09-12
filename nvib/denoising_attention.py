@@ -144,7 +144,7 @@ def denoising_attention_train(
         causal_mask = make_causal_mask(B * nheads, Nt, Nl - 1)
         causal_mask = torch.cat(
             (torch.zeros((B * nheads, Nt, 1)).bool(), causal_mask), dim=-1
-        )
+        ).to(query.device)
 
     if attn_mask is not None:
         if attn_mask.dtype == torch.bool:
