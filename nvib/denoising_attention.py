@@ -29,6 +29,7 @@ from torch.nn.modules import Module
 from torch.nn.modules.linear import NonDynamicallyQuantizableLinear
 from torch.nn.parameter import Parameter
 from torch.overrides import handle_torch_function, has_torch_function
+from transformers.cache_utils import Cache
 
 
 def make_causal_mask(B, Nt, Ns):
@@ -561,6 +562,7 @@ class DenoisingMultiheadAttention(Module):
         value: Tensor,
         key_padding_mask: Optional[Tensor] = None,
         need_weights: bool = True,
+        past_key_value: Optional[Cache] = None,
         attn_mask: Optional[Tensor] = None,
         average_attn_weights: bool = False,
     ) -> Tuple[Tensor, Optional[Tensor]]:
@@ -602,8 +604,9 @@ class DenoisingMultiheadAttention(Module):
         """
         if self.batch_first:
 
-            (key, pi, mu, logvar) = key
-            (value, pi, mu, logvar) = value
+            (key, pi, mu, logvar) = key  # key is in shape [batch, seq, features]
+            (value, pi, mu, logvar) = value  # value is in shape [batch, seq, features]
+
             # Transpose each tensor and put back in tuple
             key = (
                 key.transpose(1, 0),
