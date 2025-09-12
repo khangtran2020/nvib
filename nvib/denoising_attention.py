@@ -999,7 +999,14 @@ def denoising_multi_head_attention_forward(
 
         # [B*H,Nt, D/H]
         attn_output, attn_output_weights = denoising_attention_train(
-            q, k, v, pi.transpose(0, 1), key.transpose(0, 1), attn_mask, dropout_p
+            q,
+            k,
+            v,
+            pi.transpose(0, 1),
+            key.transpose(0, 1),
+            attn_mask,
+            dropout_p,
+            is_causal=True,
         )
 
         # Reverse multiheads
