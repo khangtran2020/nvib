@@ -479,6 +479,7 @@ class DenoisingMultiheadAttention(Module):
         batch_first=False,
         device=None,
         dtype=None,
+        fuzzing=False,
     ) -> None:
         factory_kwargs = {"device": device, "dtype": dtype}
         super(DenoisingMultiheadAttention, self).__init__()
@@ -489,6 +490,7 @@ class DenoisingMultiheadAttention(Module):
 
         self.num_heads = num_heads
         self.dropout = dropout
+        self.fuzzing = fuzzing
         self.batch_first = batch_first
         self.head_dim = embed_dim // num_heads
         assert (
@@ -640,6 +642,7 @@ class DenoisingMultiheadAttention(Module):
                 self.out_proj.weight,
                 self.out_proj.bias,
                 training=self.training,
+                fuzzing=self.fuzzing,
                 key_padding_mask=key_padding_mask,
                 need_weights=need_weights,
                 attn_mask=attn_mask,
@@ -691,6 +694,7 @@ def denoising_multi_head_attention_forward(
     out_proj_weight: Tensor,
     out_proj_bias: Optional[Tensor],
     training: bool = True,
+    fuzzing: bool = True,
     key_padding_mask: Optional[Tensor] = None,
     need_weights: bool = True,
     attn_mask: Optional[Tensor] = None,
@@ -993,7 +997,7 @@ def denoising_multi_head_attention_forward(
 
     # pprint(f"[blue]Masking value: {attn_mask.size()}, {key_padding_mask.size()}[/blue]")
 
-    if training:
+    if training or fuzzing:
         #
         # (deep breath) calculate attention and out projection
         #
