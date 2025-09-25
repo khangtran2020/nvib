@@ -330,6 +330,9 @@ class Nvib(nn.Module):
         lowerBound = self.delta * (n - 1)
 
         # Sum the alphas
+        pprint(f"[blue]Value of alpha: {alpha.size()}[/blue]")
+        pprint(f"[blue]Value of mask: {memory_key_padding_mask.size()}[/blue]")
+
         alpha = alpha.masked_fill(
             memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0
         )
