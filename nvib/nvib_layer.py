@@ -337,6 +337,9 @@ class Nvib(nn.Module):
             memory_key_padding_mask.transpose(1, 0).unsqueeze(-1), 0
         )
         alpha0_q = torch.sum(alpha, 0).squeeze(-1).to(torch.float64)  # [B]
+        pprint(
+            f"[blue]Value of alpha0_q: {alpha0_q.size()}, {self.prior_log_alpha.size()}, {lowerBound} [/blue]"
+        )
         alpha0_p = (torch.ones_like(alpha0_q) * (self.prior_log_alpha + lowerBound)).to(
             torch.float64
         )  # [B]
