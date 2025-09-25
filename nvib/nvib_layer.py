@@ -324,9 +324,9 @@ class Nvib(nn.Module):
 
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 1)  # [B]
-        pprint(f"[blue]Value of k0 - dl_d: {k0}[/blue]")
         # Input length
         n = k0 / self.kappa  # [B]
+        pprint(f"[blue]Value of n - dl_d: {n.size()}[/blue]")
         # Conditional prior lower bound. Sentence length without prior
         lowerBound = self.delta * (n - 1)
 
@@ -339,7 +339,7 @@ class Nvib(nn.Module):
         )
         alpha0_q = torch.sum(alpha, 0).squeeze(-1).to(torch.float64)  # [B]
         pprint(
-            f"[blue]Value of alpha0_q: {alpha0_q.size()}, {self.prior_log_alpha.size()}, {lowerBound} [/blue]"
+            f"[blue]Value of alpha0_q: {alpha0_q.size()}, {self.prior_log_alpha.size()}, {lowerBound.size()} [/blue]"
         )
         alpha0_p = (torch.ones_like(alpha0_q) * (self.prior_log_alpha + lowerBound)).to(
             torch.float64
