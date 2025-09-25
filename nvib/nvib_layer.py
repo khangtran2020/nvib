@@ -316,8 +316,11 @@ class Nvib(nn.Module):
         """
 
         # Logging dimension for debugging
-        pprint(f"[blue]Value of alpha: {alpha.size()}[/blue]")
-        pprint(f"[blue]Value of mask: {memory_key_padding_mask.size()}[/blue]")
+        # pprint(f"[blue]Value of alpha: {alpha.size()}[/blue]")
+        # pprint(f"[blue]Value of mask: {memory_key_padding_mask.size()}[/blue]")
+
+        alpha = alpha.transpose(1, 0)  # [Nl,B,1]
+        memory_key_padding_mask = memory_key_padding_mask  # [B,Nl]
 
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 1)  # [B]
