@@ -324,7 +324,7 @@ class Nvib(nn.Module):
 
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 1)  # [B]
-        print(f"[blue]Value of k0 - dl_d: {k0}[/blue]")
+        pprint(f"[blue]Value of k0 - dl_d: {k0}[/blue]")
         # Input length
         n = k0 / self.kappa  # [B]
         # Conditional prior lower bound. Sentence length without prior
