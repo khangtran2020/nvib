@@ -314,6 +314,11 @@ class Nvib(nn.Module):
 
         Nota Bene: digamma and lgamma cannot be zero
         """
+
+        # Logging dimension for debugging
+        pprint(f"[blue]Value of alpha: {alpha.size()}[/blue]")
+        pprint(f"[blue]Value of mask: {memory_key_padding_mask.size()}[/blue]")
+
         # Total number of vectors sampled
         k0 = torch.sum(~memory_key_padding_mask.transpose(1, 0), 1)  # [B]
         # Input length
